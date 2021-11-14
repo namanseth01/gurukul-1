@@ -33,9 +33,15 @@ public class UserController {
         Long id = Long.parseLong((String) map.get("id"));
         Student student = this.studentRepository.getById(id);
         List<Classes> classesList = student.getClasses();
-        ArrayList<String> list = new ArrayList<>();
+        ArrayList<Classes> list = new ArrayList<>();
         for (Classes classes: classesList) {
-            list.add(classes.stringTo());
+            Classes classes1 = new Classes();
+            classes1.setTitle(classes.getTitle());
+            classes1.setId(classes.getId());
+            classes1.setTopic(classes.getTopic());
+            classes1.setMotto(classes.getMotto());
+            classes1.setTeacher(classes.getTeacher());
+            list.add(classes1);
         }
         return ResponseEntity.ok(Map.of("list",list));
 
