@@ -43,6 +43,16 @@ public class Classes {
                 '}';
     }
 
+
+    public String stringTo() {
+        return "Classes{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", topic='" + topic + '\'' +
+                ", motto='" + motto + '\'' +
+                '}';
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -151,4 +161,6 @@ public class Classes {
 
     public Classes() {
     }
+
+
 }
