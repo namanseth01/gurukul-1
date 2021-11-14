@@ -1,6 +1,5 @@
 package com.example.gurukul.repository;
 
-import com.example.gurukul.entity.Assignment;
 import com.example.gurukul.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
