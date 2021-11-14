@@ -38,7 +38,7 @@ public class HomeController {
 
     @ResponseBody
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
-    public ResponseEntity<?> login(@RequestBody HashMap<String, Object> map) {
+    public ResponseEntity<?> signUp(@RequestBody HashMap<String, Object> map) {
         if(map.get("role").equals("teacher")){
             Teacher teacher = new Teacher();
             teacher.setId(Long.parseLong((String) map.get("id")));
@@ -78,7 +78,20 @@ public class HomeController {
         classes1.add(classes);
         classesRepository.save(classes);
         teacherRepository.save(teacher);
-        return ResponseEntity.ok(Map.of("Status","success"));
+        return ResponseEntity.ok(Map.of("SecretCode",classes.getSecretCode()));
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/studentJoinClass", method = RequestMethod.POST)
+    public ResponseEntity<?> studentJoinsClass(@RequestBody HashMap<String, Object> map){
+        Classes classes = classesRepository.findClassesBySecretCode(Long.parseLong((String) map.get("secretCode")));
+        Student student = studentRepository.findById(Long.parseLong((String) map.get("id")));
+        List<Student> student1 = classes.getStudent();
+        List<Classes> classes1 = student.getClasses();
+        classes1.add(classes);
+        student1.add(student);
+        classesRepository.save(classes);
+        studentRepository.save(student);
+        return ResponseEntity.ok(Map.of("Status","success"));
+    }
 }
