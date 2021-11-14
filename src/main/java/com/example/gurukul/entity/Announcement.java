@@ -18,4 +18,7 @@ public class Announcement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    public Announcement() {
+    }
 }

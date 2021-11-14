@@ -19,4 +19,7 @@ public class Classes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    public Classes() {
+    }
 }

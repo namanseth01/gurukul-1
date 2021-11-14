@@ -15,4 +15,7 @@ public class Teacher {
 
     @Id
     private long id;
+
+    public Teacher() {
+    }
 }

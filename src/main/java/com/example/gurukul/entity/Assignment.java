@@ -19,4 +19,7 @@ public class Assignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    public Assignment() {
+    }
 }

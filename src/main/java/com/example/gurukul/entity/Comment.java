@@ -18,4 +18,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    public Comment() {
+    }
 }

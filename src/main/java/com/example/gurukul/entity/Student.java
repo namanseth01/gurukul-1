@@ -16,4 +16,7 @@ public class Student {
 
     @Id
     private long id;
+
+    public Student() {
+    }
 }
