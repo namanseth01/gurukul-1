@@ -57,18 +57,24 @@ public class UserController {
     @RequestMapping(value = "/announce", method = RequestMethod.POST)
     public ResponseEntity<?> createAnnouncements(@RequestBody HashMap<String, Object> map) throws ParseException {
         Announcement announcement = new Announcement();
-        announcement.setId(Integer.parseInt((String) map.get("id")));
         announcement.setMsg((String)map.get("msg"));
         announcement.setMessage((String)map.get("msg"));
         Date date=new SimpleDateFormat("dd/MM/yyyy").parse((String) map.get("date"));
         announcement.setDate(date);
-        Date dueDate = new SimpleDateFormat("dd/MM/yyyy").parse((String) map.get("dueDate"));
-        int classId = Integer.parseInt((String)((Map)map.get("classes")).get("id"));
-        Classes classes = this.classesRepository.getById(classId);
+        int classId = Integer.parseInt((String)((Map)map.get("classes")).get("secretCode"));
+        Classes classes = this.classesRepository.findClassesBySecretCode(classId);
         announcement.setClasses(classes);
+        if(map.get("dueDate")!=null){
+            Date dueDate = new SimpleDateFormat("dd/MM/yyyy").parse((String) map.get("dueDate"));
+            announcement.setDueDate(dueDate);
+            List<Assignment> assignments = new ArrayList<>();
+            announcement.setAssignments(assignments);
+        }
         List<Announcement> list = classes.getAnnouncement();
         list.add(announcement);
         classes.setAnnouncement(list);
+        classesRepository.save(classes);
+        announcementRepository.save(announcement);
         return ResponseEntity.ok(Map.of("classes", classes));
     }
 

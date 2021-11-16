@@ -42,20 +42,20 @@ public class HomeController {
     @ResponseBody
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public ResponseEntity<?> signUp(@RequestBody HashMap<String, Object> map) {
-        if(map.get("role").equals("teacher")){
+        if (map.get("role").equals("teacher")) {
             Teacher teacher = new Teacher();
             teacher.setId(Long.parseLong((String) map.get("id")));
             teacher.setName((String) map.get("name"));
             teacher.setEmail((String) map.get("email"));
             teacherRepository.save(teacher);
-        } else{
+        } else {
             Student student = new Student();
             student.setId(Long.parseLong((String) map.get("id")));
             student.setName((String) map.get("name"));
             student.setEmail((String) map.get("email"));
             studentRepository.save(student);
         }
-        return ResponseEntity.ok(Map.of("Status","success"));
+        return ResponseEntity.ok(Map.of("Status", "success"));
     }
 
     @ResponseBody
@@ -67,11 +67,11 @@ public class HomeController {
         classes.setMotto((String) map.get("motto"));
         Teacher teacher = teacherRepository.findById(Long.parseLong((String) map.get("id")));
         Random rnd = new Random();
-        while (true){
+        while (true) {
             int number = rnd.nextInt(999999);
             String secretCode = String.format("%06d", number);
             Classes classes1 = classesRepository.findClassesBySecretCode(Long.parseLong(secretCode));
-            if(classes1==null){
+            if (classes1 == null) {
                 classes.setSecretCode(Long.parseLong(secretCode));
                 break;
             }
@@ -79,54 +79,58 @@ public class HomeController {
         classes.setTeacher(teacher);
         List<Classes> classes1 = teacher.getClasses();
         classes1.add(classes);
+        teacher.setClasses(classes1);
         classesRepository.save(classes);
         teacherRepository.save(teacher);
-        return ResponseEntity.ok(Map.of("SecretCode",classes.getSecretCode()));
+        return ResponseEntity.ok(Map.of("SecretCode", classes.getSecretCode()));
     }
 
     @ResponseBody
     @RequestMapping(value = "/studentJoinClass", method = RequestMethod.POST)
-    public ResponseEntity<?> studentJoinsClass(@RequestBody HashMap<String, Object> map){
+    public ResponseEntity<?> studentJoinsClass(@RequestBody HashMap<String, Object> map) {
         Classes classes = classesRepository.findClassesBySecretCode(Long.parseLong((String) map.get("secretCode")));
         Student student = studentRepository.findById(Long.parseLong((String) map.get("id")));
         List<Student> student1 = classes.getStudent();
         List<Classes> classes1 = student.getClasses();
         classes1.add(classes);
         student1.add(student);
+        classes.setStudent(student1);
+        student.setClasses(classes1);
         classesRepository.save(classes);
         studentRepository.save(student);
-        return ResponseEntity.ok(Map.of("Status","success"));
+        return ResponseEntity.ok(Map.of("Status", "success"));
     }
 
     @ResponseBody
     @RequestMapping(value = "/fetchAnnouncements", method = RequestMethod.POST)
-    public ResponseEntity<?> fetchAnnouncements(@RequestBody HashMap<String, Object> map){
+    public ResponseEntity<?> fetchAnnouncements(@RequestBody HashMap<String, Object> map) {
         Classes classesBySecretCode = classesRepository.findClassesBySecretCode(Long.parseLong((String)
                 map.get("secretCode")));
         List<Announcement> announcement = classesBySecretCode.getAnnouncement();
-        return ResponseEntity.ok(Map.of("announcement",announcement));
+        return ResponseEntity.ok(Map.of("announcement", announcement));
     }
 
     @ResponseBody
     @RequestMapping(value = "/fetchAnnouncementsDetails", method = RequestMethod.POST)
-    public ResponseEntity<?> fetchAnnouncementDetails(@RequestBody HashMap<String, Object> map){
+    public ResponseEntity<?> fetchAnnouncementDetails(@RequestBody HashMap<String, Object> map) {
         Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
                 map.get("announcementId")));
         Teacher teacher = teacherRepository.findById(Long.parseLong((String) map.get("uId")));
-        if(teacher!=null) {
+        List<Comment> comment = announcement.getComment();
+        if (teacher != null) {
             List<Assignment> assignments = announcement.getAssignments();
-            return ResponseEntity.ok(Map.of("announcement",announcement,"assignment",assignments));
+            return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignments, "comment", comment));
         } else {
             Student student = studentRepository.findById(Long.parseLong((String) map.get("uId")));
             Assignment assignment = assignmentRepository.findAssignmentByAnnouncementAndStudent
-                    (announcement,student);
-            return ResponseEntity.ok(Map.of("announcement",announcement,"assignment",assignment));
+                    (announcement, student);
+            return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignment, "comment", comment));
         }
     }
 
     @ResponseBody
     @RequestMapping(value = "/submitAnnouncements", method = RequestMethod.POST)
-    public ResponseEntity<?> submitAnnouncement(@RequestBody HashMap<String, Object> map, @RequestParam("file") MultipartFile file){
+    public ResponseEntity<?> submitAnnouncement(@RequestBody HashMap<String, Object> map, @RequestParam("file") MultipartFile file) {
         Student student = studentRepository.findById(Long.parseLong((String) map.get("uId")));
         Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
                 map.get("announcementId")));
@@ -147,9 +151,11 @@ public class HomeController {
         }
         studentAssignments.add(assignment);
         announcementAssignments.add(assignment);
+        student.setAssignments(studentAssignments);
+        announcement.setAssignments(announcementAssignments);
         studentRepository.save(student);
         announcementRepository.save(announcement);
-        return ResponseEntity.ok(Map.of("Status","success"));
+        return ResponseEntity.ok(Map.of("Status", "success"));
     }
 
 }
