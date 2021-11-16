@@ -10,10 +10,14 @@ package com.example.gurukul.controller;
 
 import com.example.gurukul.entity.*;
 import com.example.gurukul.repository.*;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +121,34 @@ public class HomeController {
                     (Integer.parseInt((String) map.get("announcementId")), Long.parseLong((String) map.get("uId")));
             return ResponseEntity.ok(Map.of("announcement",announcement,"assignment",assignment));
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/submitAnnouncements", method = RequestMethod.POST)
+    public ResponseEntity<?> submitAnnouncement(@RequestBody HashMap<String, Object> map, @RequestParam("file") MultipartFile file){
+        Student student = studentRepository.findById(Long.parseLong((String) map.get("uId")));
+        Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
+                map.get("announcementId")));
+        Assignment assignment = assignmentRepository.findAssignmentById(Integer.parseInt((String)
+                map.get("assignmentId")));
+        List<Assignment> studentAssignments = student.getAssignments();
+        List<Assignment> announcementAssignments = announcement.getAssignments();
+        assignment.setStudent(student);
+        assignment.setAnnouncement(announcement);
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        assignment.setExtension(extension);
+        byte[] bytes;
+        try {
+            bytes = file.getBytes();
+            assignment.setAssignmentFile(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        studentAssignments.add(assignment);
+        announcementAssignments.add(assignment);
+        studentRepository.save(student);
+        announcementRepository.save(announcement);
+        return ResponseEntity.ok(Map.of("Status","success"));
     }
 
 }
