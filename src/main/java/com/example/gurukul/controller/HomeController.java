@@ -8,6 +8,7 @@
 package com.example.gurukul.controller;
 
 
+import com.example.gurukul.entity.Announcement;
 import com.example.gurukul.entity.Classes;
 import com.example.gurukul.entity.Student;
 import com.example.gurukul.entity.Teacher;
@@ -93,5 +94,13 @@ public class HomeController {
         classesRepository.save(classes);
         studentRepository.save(student);
         return ResponseEntity.ok(Map.of("Status","success"));
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/fetchAnnouncements", method = RequestMethod.POST)
+    public ResponseEntity<?> fetchAnnouncements(@RequestBody HashMap<String, Object> map){
+        Classes classesBySecretCode = classesRepository.findClassesBySecretCode(Long.parseLong((String) map.get("secretCode")));
+        List<Announcement> announcement = classesBySecretCode.getAnnouncement();
+        return ResponseEntity.ok(Map.of("announcement",announcement));
     }
 }

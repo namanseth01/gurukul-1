@@ -7,6 +7,9 @@
 
 package com.example.gurukul.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -21,8 +24,10 @@ public class Teacher {
     private String name;
     private String email;
     @OneToMany(mappedBy = "teacher")
+    @JsonManagedReference
     private List<Classes> classes;
     @OneToMany(mappedBy = "teacher")
+    @JsonBackReference
     private List<Comment> comments;
 
     public Teacher(long id, String name, String email) {

@@ -7,6 +7,9 @@
 
 package com.example.gurukul.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Date;
@@ -25,8 +28,10 @@ public class Announcement {
     private Date dueDate;
     private Byte[] assignmentFile;
     @ManyToOne
+    @JsonBackReference
     private Classes classes;
     @OneToMany(mappedBy = "announcement")
+    @JsonManagedReference
     private List<Comment> comment;
 
     @Override

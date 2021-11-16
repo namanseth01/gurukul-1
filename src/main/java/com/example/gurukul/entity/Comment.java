@@ -7,6 +7,9 @@
 
 package com.example.gurukul.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -18,10 +21,13 @@ public class Comment {
     private int id;
     private String message;
     @ManyToOne
+    @JsonManagedReference
     private Teacher teacher;
     @ManyToOne
+    @JsonManagedReference
     private Student student;
     @ManyToOne
+    @JsonBackReference
     private Announcement announcement;
     private String type;
 

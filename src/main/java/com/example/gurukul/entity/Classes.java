@@ -8,6 +8,9 @@
 package com.example.gurukul.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -23,10 +26,13 @@ public class Classes {
     private String motto;
     private long secretCode;
     @OneToMany(mappedBy = "classes")
+    @JsonManagedReference
     private List<Announcement> announcement;
     @ManyToOne
+    @JsonBackReference
     private Teacher teacher;
     @ManyToMany
+    @JsonBackReference
     private List<Student> student;
 
     @Override
