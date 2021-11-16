@@ -7,5 +7,10 @@
 
 package com.example.gurukul.repository;
 
-public interface AnnouncementRepository {
+import com.example.gurukul.entity.Announcement;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AnnouncementRepository extends JpaRepository<Announcement,Integer> {
+
+    Announcement findAnnouncementById(int id);
 }

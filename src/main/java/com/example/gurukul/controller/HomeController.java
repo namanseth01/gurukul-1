@@ -8,13 +8,8 @@
 package com.example.gurukul.controller;
 
 
-import com.example.gurukul.entity.Announcement;
-import com.example.gurukul.entity.Classes;
-import com.example.gurukul.entity.Student;
-import com.example.gurukul.entity.Teacher;
-import com.example.gurukul.repository.ClassesRepository;
-import com.example.gurukul.repository.StudentRepository;
-import com.example.gurukul.repository.TeacherRepository;
+import com.example.gurukul.entity.*;
+import com.example.gurukul.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,6 +30,10 @@ public class HomeController {
     private TeacherRepository teacherRepository;
     @Autowired
     private ClassesRepository classesRepository;
+    @Autowired
+    private AnnouncementRepository announcementRepository;
+    @Autowired
+    private AssignmentRepository assignmentRepository;
 
     @ResponseBody
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
@@ -98,8 +97,26 @@ public class HomeController {
     @ResponseBody
     @RequestMapping(value = "/fetchAnnouncements", method = RequestMethod.POST)
     public ResponseEntity<?> fetchAnnouncements(@RequestBody HashMap<String, Object> map){
-        Classes classesBySecretCode = classesRepository.findClassesBySecretCode(Long.parseLong((String) map.get("secretCode")));
+        Classes classesBySecretCode = classesRepository.findClassesBySecretCode(Long.parseLong((String)
+                map.get("secretCode")));
         List<Announcement> announcement = classesBySecretCode.getAnnouncement();
         return ResponseEntity.ok(Map.of("announcement",announcement));
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/fetchAnnouncementsDetails", method = RequestMethod.POST)
+    public ResponseEntity<?> fetchAnnouncementDetails(@RequestBody HashMap<String, Object> map){
+        Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
+                map.get("announcementId")));
+        Teacher teacher = teacherRepository.findById(Long.parseLong((String) map.get("uId")));
+        if(teacher!=null) {
+            List<Assignment> assignments = announcement.getAssignments();
+            return ResponseEntity.ok(Map.of("announcement",announcement,"assignment",assignments));
+        } else {
+            Assignment assignment = assignmentRepository.findAssignmentByAnnouncementAndStudent
+                    (Integer.parseInt((String) map.get("announcementId")), Long.parseLong((String) map.get("uId")));
+            return ResponseEntity.ok(Map.of("announcement",announcement,"assignment",assignment));
+        }
+    }
+
 }
