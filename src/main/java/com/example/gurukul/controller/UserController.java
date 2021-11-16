@@ -7,18 +7,18 @@
 
 package com.example.gurukul.controller;
 
-import com.example.gurukul.entity.Classes;
-import com.example.gurukul.entity.Student;
-import com.example.gurukul.repository.StudentRepository;
+import com.example.gurukul.entity.*;
+import com.example.gurukul.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Controller
 @RestController
@@ -27,23 +27,93 @@ public class UserController {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private ClassesRepository classesRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+    @Autowired
+    private AssignmentRepository assignmentRepository;
+
+    @Autowired
+    private AnnouncementRepository announcementRepository;
+
     @ResponseBody
     @RequestMapping(value = "/class", method = RequestMethod.POST)
     public ResponseEntity<?> getClasses(@RequestBody HashMap<String, Object> map){
         Long id = Long.parseLong((String) map.get("id"));
         Student student = this.studentRepository.getById(id);
         List<Classes> classesList = student.getClasses();
-        ArrayList<Classes> list = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
         for (Classes classes: classesList) {
-            Classes classes1 = new Classes();
-            classes1.setTitle(classes.getTitle());
-            classes1.setId(classes.getId());
-            classes1.setTopic(classes.getTopic());
-            classes1.setMotto(classes.getMotto());
-            classes1.setTeacher(classes.getTeacher());
-            list.add(classes1);
+            list.add(classes.stringTo());
         }
         return ResponseEntity.ok(Map.of("list",list));
 
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/announce", method = RequestMethod.POST)
+    public ResponseEntity<?> createAnnouncements(@RequestBody HashMap<String, Object> map) throws ParseException {
+        Announcement announcement = new Announcement();
+        announcement.setId(Integer.parseInt((String) map.get("id")));
+        announcement.setMsg((String)map.get("msg"));
+        announcement.setMessage((String)map.get("msg"));
+        Date date=new SimpleDateFormat("dd/MM/yyyy").parse((String) map.get("date"));
+        announcement.setDate(date);
+        Date dueDate = new SimpleDateFormat("dd/MM/yyyy").parse((String) map.get("dueDate"));
+        int classId = Integer.parseInt((String)((Map)map.get("classes")).get("id"));
+        Classes classes = this.classesRepository.getById(classId);
+        announcement.setClasses(classes);
+        List<Announcement> list = classes.getAnnouncement();
+        list.add(announcement);
+        classes.setAnnouncement(list);
+        return ResponseEntity.ok(Map.of("classes", classes));
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/classes", method = RequestMethod.POST)
+    public ResponseEntity<?> displayClasses(@RequestBody HashMap<String, Object> map){
+        Long id = Long.parseLong((String) map.get("id"));
+        List<Classes> listOfClasses = new ArrayList<Classes>();
+        if(this.studentRepository.getById(id)!=null){
+            Student student = this.studentRepository.getById(id);
+            listOfClasses = student.getClasses();
+        }if(this.teacherRepository.getById(id)!=null){
+            Teacher teacher = this.teacherRepository.getById(id);
+            listOfClasses = teacher.getClasses();
+        }
+        return ResponseEntity.ok(Map.of("listOfClasses", listOfClasses));
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/comments", method = RequestMethod.POST)
+    public ResponseEntity<?> createComments(@RequestBody HashMap<String, Object> map){
+        int aId = Integer.parseInt((String) map.get("uId"));
+        Announcement announcement = this.announcementRepository.getById(aId);
+        List<Comment> commentsUnderAnnouncement = new ArrayList<Comment>();
+        commentsUnderAnnouncement = announcement.getComment();
+        Comment comment = new Comment();
+        comment.setId(Integer.parseInt( (String)map.get("id")));
+        comment.setMessage((String) map.get("message"));
+        comment.setType((String) map.get("type"));
+        comment.setTeacher((Teacher) map.get("Teacher"));
+        comment.setStudent((Student) map.get("Student"));
+        commentsUnderAnnouncement.add(comment);
+        announcement.setComment(commentsUnderAnnouncement);
+        return ResponseEntity.ok(Map.of("commentUnderAnnouncement", commentsUnderAnnouncement));
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/displayComments", method = RequestMethod.POST)
+    public ResponseEntity<?> displayComments(@RequestBody HashMap<String, Object> map){
+        Integer.parseInt((String) map.get("id"));
+        Announcement announcement = this.announcementRepository.getById(Integer.parseInt((String) map.get("id")));
+        List<Comment> comments = new ArrayList<Comment>();
+        comments = announcement.getComment();
+        return ResponseEntity.ok(Map.of("Comments", comments));
+    }
+
+
 }
