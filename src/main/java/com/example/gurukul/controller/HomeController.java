@@ -117,8 +117,9 @@ public class HomeController {
             List<Assignment> assignments = announcement.getAssignments();
             return ResponseEntity.ok(Map.of("announcement",announcement,"assignment",assignments));
         } else {
+            Student student = studentRepository.findById(Long.parseLong((String) map.get("uId")));
             Assignment assignment = assignmentRepository.findAssignmentByAnnouncementAndStudent
-                    (Integer.parseInt((String) map.get("announcementId")), Long.parseLong((String) map.get("uId")));
+                    (announcement,student);
             return ResponseEntity.ok(Map.of("announcement",announcement,"assignment",assignment));
         }
     }
