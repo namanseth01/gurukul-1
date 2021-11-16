@@ -28,6 +28,9 @@ public class Student {
     @OneToMany(mappedBy = "student")
     @JsonBackReference
     private List<Comment> comments;
+    @OneToMany(mappedBy = "student")
+    @JsonBackReference
+    private List<Assignment> assignments;
 
     @Override
     public String toString() {
@@ -37,6 +40,7 @@ public class Student {
                 ", email='" + email + '\'' +
                 ", classes=" + classes +
                 ", comments=" + comments +
+                ", assignments=" + assignments +
                 '}';
     }
 
@@ -45,12 +49,20 @@ public class Student {
         if (this == o) return true;
         if (!(o instanceof Student)) return false;
         Student student = (Student) o;
-        return getId() == student.getId() && Objects.equals(getName(), student.getName()) && Objects.equals(getEmail(), student.getEmail()) && Objects.equals(getClasses(), student.getClasses()) && Objects.equals(getComments(), student.getComments());
+        return getId() == student.getId() && Objects.equals(getName(), student.getName()) && Objects.equals(getEmail(), student.getEmail()) && Objects.equals(getClasses(), student.getClasses()) && Objects.equals(getComments(), student.getComments()) && Objects.equals(getAssignments(), student.getAssignments());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getClasses(), getComments());
+        return Objects.hash(getId(), getName(), getEmail(), getClasses(), getComments(), getAssignments());
+    }
+
+    public List<Assignment> getAssignments() {
+        return assignments;
+    }
+
+    public void setAssignments(List<Assignment> assignments) {
+        this.assignments = assignments;
     }
 
     public long getId() {

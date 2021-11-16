@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -26,13 +25,28 @@ public class Announcement {
     private Date date;
     private String message;
     private Date dueDate;
-    private Byte[] assignmentFile;
     @ManyToOne
     @JsonBackReference
     private Classes classes;
     @OneToMany(mappedBy = "announcement")
     @JsonManagedReference
     private List<Comment> comment;
+    @OneToMany(mappedBy = "announcement")
+    @JsonBackReference
+    private List<Assignment> assignments;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Announcement)) return false;
+        Announcement that = (Announcement) o;
+        return getId() == that.getId() && Objects.equals(getMsg(), that.getMsg()) && Objects.equals(getDate(), that.getDate()) && Objects.equals(getMessage(), that.getMessage()) && Objects.equals(getDueDate(), that.getDueDate()) && Objects.equals(getClasses(), that.getClasses()) && Objects.equals(getComment(), that.getComment()) && Objects.equals(getAssignments(), that.getAssignments());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getMsg(), getDate(), getMessage(), getDueDate(), getClasses(), getComment(), getAssignments());
+    }
 
     @Override
     public String toString() {
@@ -42,25 +56,18 @@ public class Announcement {
                 ", date=" + date +
                 ", message='" + message + '\'' +
                 ", dueDate=" + dueDate +
-                ", assignmentFile=" + Arrays.toString(assignmentFile) +
                 ", classes=" + classes +
                 ", comment=" + comment +
+                ", assignments=" + assignments +
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Announcement)) return false;
-        Announcement that = (Announcement) o;
-        return getId() == that.getId() && Objects.equals(getMsg(), that.getMsg()) && Objects.equals(getDate(), that.getDate()) && Objects.equals(getMessage(), that.getMessage()) && Objects.equals(getDueDate(), that.getDueDate()) && Arrays.equals(getAssignmentFile(), that.getAssignmentFile()) && Objects.equals(getClasses(), that.getClasses()) && Objects.equals(getComment(), that.getComment());
+    public List<Assignment> getAssignments() {
+        return assignments;
     }
 
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(getId(), getMsg(), getDate(), getMessage(), getDueDate(), getClasses(), getComment());
-        result = 31 * result + Arrays.hashCode(getAssignmentFile());
-        return result;
+    public void setAssignments(List<Assignment> assignments) {
+        this.assignments = assignments;
     }
 
     public int getId() {
@@ -103,14 +110,6 @@ public class Announcement {
         this.dueDate = dueDate;
     }
 
-    public Byte[] getAssignmentFile() {
-        return assignmentFile;
-    }
-
-    public void setAssignmentFile(Byte[] assignmentFile) {
-        this.assignmentFile = assignmentFile;
-    }
-
     public Classes getClasses() {
         return classes;
     }
@@ -135,23 +134,21 @@ public class Announcement {
         this.comment = comment;
     }
 
-    public Announcement(String msg, Date date, String message, Date dueDate, Byte[] assignmentFile, Classes classes, List<Comment> comment) {
+    public Announcement(String msg, Date date, String message, Date dueDate, Classes classes, List<Comment> comment) {
         this.msg = msg;
         this.date = date;
         this.message = message;
         this.dueDate = dueDate;
-        this.assignmentFile = assignmentFile;
         this.classes = classes;
         this.comment = comment;
     }
 
-    public Announcement(int id, String msg, Date date, String message, Date dueDate, Byte[] assignmentFile, Classes classes, List<Comment> comment) {
+    public Announcement(int id, String msg, Date date, String message, Date dueDate, Classes classes, List<Comment> comment) {
         this.id = id;
         this.msg = msg;
         this.date = date;
         this.message = message;
         this.dueDate = dueDate;
-        this.assignmentFile = assignmentFile;
         this.classes = classes;
         this.comment = comment;
     }
