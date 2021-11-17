@@ -86,6 +86,7 @@ public class UserController {
         Announcement announcement = this.announcementRepository.getById(Integer.parseInt((String) map.get("announcementId")));
         List<Comment> commentsUnderAnnouncement = announcement.getComment();
         Comment comment = new Comment();
+        comment.setAnnouncement(announcement);
         comment.setMessage((String) map.get("message"));
         Teacher teacher = null;
         Student student = null;
