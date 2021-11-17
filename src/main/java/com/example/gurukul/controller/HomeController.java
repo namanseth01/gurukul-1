@@ -116,15 +116,21 @@ public class HomeController {
         Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
                 map.get("announcementId")));
         Teacher teacher = teacherRepository.findById(Long.parseLong((String) map.get("uId")));
-        List<Comment> comment = announcement.getComment();
+
+        if(announcement.getDueDate()==null){
+            return ResponseEntity.ok(Map.of("announcement", announcement));
+        }
         if (teacher != null) {
             List<Assignment> assignments = announcement.getAssignments();
-            return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignments, "comment", comment));
+            return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignments));
         } else {
             Student student = studentRepository.findById(Long.parseLong((String) map.get("uId")));
             Assignment assignment = assignmentRepository.findAssignmentByAnnouncementAndStudent
                     (announcement, student);
-            return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignment, "comment", comment));
+            if(assignment==null){
+                assignment = new Assignment();
+            }
+            return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignment));
         }
     }
 
@@ -134,8 +140,7 @@ public class HomeController {
         Student student = studentRepository.findById(Long.parseLong((String) map.get("uId")));
         Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
                 map.get("announcementId")));
-        Assignment assignment = assignmentRepository.findAssignmentById(Integer.parseInt((String)
-                map.get("assignmentId")));
+        Assignment assignment = new Assignment();
         List<Assignment> studentAssignments = student.getAssignments();
         List<Assignment> announcementAssignments = announcement.getAssignments();
         assignment.setStudent(student);
@@ -153,9 +158,18 @@ public class HomeController {
         announcementAssignments.add(assignment);
         student.setAssignments(studentAssignments);
         announcement.setAssignments(announcementAssignments);
+        assignmentRepository.save(assignment);
         studentRepository.save(student);
         announcementRepository.save(announcement);
         return ResponseEntity.ok(Map.of("Status", "success"));
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/teacherGivesMArks", method = RequestMethod.POST)
+    public ResponseEntity<?> teacherGivesMArks(@RequestBody HashMap<String, Object> map) {
+        Assignment assignment = assignmentRepository.findAssignmentById(Integer.parseInt((String) map.get("assignmentId")));
+        assignment.setMarks(Float.parseFloat((String) map.get("marks")));
+        assignmentRepository.save(assignment);
+        return ResponseEntity.ok(Map.of("Status", "success"));
+    }
 }

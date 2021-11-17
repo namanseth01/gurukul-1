@@ -28,6 +28,7 @@ public class Assignment {
     @JsonManagedReference
     private Student student;
     private String extension;
+    private float marks;
 
     @Override
     public String toString() {
@@ -37,22 +38,32 @@ public class Assignment {
                 ", announcement=" + announcement +
                 ", student=" + student +
                 ", extension='" + extension + '\'' +
+                ", marks=" + marks +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (!(o instanceof Assignment)) return false;
         Assignment that = (Assignment) o;
-        return getId() == that.getId() && Arrays.equals(getAssignmentFile(), that.getAssignmentFile()) && Objects.equals(getAnnouncement(), that.getAnnouncement()) && Objects.equals(getStudent(), that.getStudent()) && Objects.equals(getExtension(), that.getExtension());
+        return getId() == that.getId() && Float.compare(that.getMarks(), getMarks()) == 0 && Arrays.equals(getAssignmentFile(), that.getAssignmentFile()) && Objects.equals(getAnnouncement(), that.getAnnouncement()) && Objects.equals(getStudent(), that.getStudent()) && Objects.equals(getExtension(), that.getExtension());
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getId(), getAnnouncement(), getStudent(), getExtension());
+        int result = Objects.hash(getId(), getAnnouncement(), getStudent(), getExtension(), getMarks());
         result = 31 * result + Arrays.hashCode(getAssignmentFile());
         return result;
+    }
+
+    public float getMarks() {
+        return marks;
+    }
+
+    public void setMarks(float marks) {
+        this.marks = marks;
     }
 
     public Assignment(int id, byte[] assignmentFile, Announcement announcement, Student student, String extension) {
