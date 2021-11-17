@@ -34,10 +34,10 @@ public class UserController {
     private TeacherRepository teacherRepository;
 
     @Autowired
-    private AssignmentRepository assignmentRepository;
+    private AnnouncementRepository announcementRepository;
 
     @Autowired
-    private AnnouncementRepository announcementRepository;
+    private CommentRepository commentRepository;
 
     @ResponseBody
     @RequestMapping(value = "/announce", method = RequestMethod.POST)
@@ -82,18 +82,34 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/comments", method = RequestMethod.POST)
     public ResponseEntity<?> createComments(@RequestBody HashMap<String, Object> map){
-        int aId = Integer.parseInt((String) map.get("uId"));
-        Announcement announcement = this.announcementRepository.getById(aId);
-        List<Comment> commentsUnderAnnouncement = new ArrayList<Comment>();
-        commentsUnderAnnouncement = announcement.getComment();
+        Long aId = Long.parseLong((String) map.get("uId"));
+        Announcement announcement = this.announcementRepository.getById(Integer.parseInt((String) map.get("announcementId")));
+        List<Comment> commentsUnderAnnouncement = announcement.getComment();
         Comment comment = new Comment();
-        comment.setId(Integer.parseInt( (String)map.get("id")));
         comment.setMessage((String) map.get("message"));
-        comment.setType((String) map.get("type"));
-        comment.setTeacher((Teacher) map.get("Teacher"));
-        comment.setStudent((Student) map.get("Student"));
+        Teacher teacher = null;
+        Student student = null;
+        if(studentRepository.findById(aId)!=null){
+            student = studentRepository.getById(aId);
+            comment.setStudent(student);
+            List<Comment> comments = student.getComments();
+            comments.add(comment);
+        } else{
+            comment.setTeacher(teacherRepository.getById(aId));
+            teacher = teacherRepository.getById(aId);
+            comment.setTeacher(teacher);
+            List<Comment> comments = teacher.getComments();
+            comments.add(comment);
+        }
         commentsUnderAnnouncement.add(comment);
         announcement.setComment(commentsUnderAnnouncement);
+        commentRepository.save(comment);
+        announcementRepository.save(announcement);
+        if(student!=null){
+            studentRepository.save(student);
+        } else {
+            teacherRepository.save(teacher);
+        }
         return ResponseEntity.ok(Map.of("commentUnderAnnouncement", commentsUnderAnnouncement));
     }
 }

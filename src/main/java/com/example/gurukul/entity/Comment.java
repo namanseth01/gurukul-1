@@ -29,7 +29,6 @@ public class Comment {
     @ManyToOne
     @JsonBackReference
     private Announcement announcement;
-    private String type;
 
     @Override
     public String toString() {
@@ -39,7 +38,6 @@ public class Comment {
                 ", teacher=" + teacher +
                 ", student=" + student +
                 ", announcement=" + announcement +
-                ", type='" + type + '\'' +
                 '}';
     }
 
@@ -48,12 +46,12 @@ public class Comment {
         if (this == o) return true;
         if (!(o instanceof Comment)) return false;
         Comment comment = (Comment) o;
-        return getId() == comment.getId() && Objects.equals(getMessage(), comment.getMessage()) && Objects.equals(getTeacher(), comment.getTeacher()) && Objects.equals(getStudent(), comment.getStudent()) && Objects.equals(getAnnouncement(), comment.getAnnouncement()) && Objects.equals(getType(), comment.getType());
+        return getId() == comment.getId() && Objects.equals(getMessage(), comment.getMessage()) && Objects.equals(getTeacher(), comment.getTeacher()) && Objects.equals(getStudent(), comment.getStudent()) && Objects.equals(getAnnouncement(), comment.getAnnouncement());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getMessage(), getTeacher(), getStudent(), getAnnouncement(), getType());
+        return Objects.hash(getId(), getMessage(), getTeacher(), getStudent(), getAnnouncement());
     }
 
     public int getId() {
@@ -96,36 +94,25 @@ public class Comment {
         this.announcement = announcement;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Comment(String message, Teacher teacher, Announcement announcement, String type) {
+    public Comment(String message, Teacher teacher, Announcement announcement) {
         this.message = message;
         this.teacher = teacher;
         this.announcement = announcement;
-        this.type = type;
     }
 
-    public Comment(String message, Teacher teacher, Student student, Announcement announcement, String type) {
+    public Comment(String message, Teacher teacher, Student student, Announcement announcement) {
         this.message = message;
         this.teacher = teacher;
         this.student = student;
         this.announcement = announcement;
-        this.type = type;
     }
 
-    public Comment(int id, String message, Teacher teacher, Student student, Announcement announcement, String type) {
+    public Comment(int id, String message, Teacher teacher, Student student, Announcement announcement) {
         this.id = id;
         this.message = message;
         this.teacher = teacher;
         this.student = student;
         this.announcement = announcement;
-        this.type = type;
     }
 
     public Comment() {
