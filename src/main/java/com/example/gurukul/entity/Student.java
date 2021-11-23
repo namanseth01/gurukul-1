@@ -19,7 +19,53 @@ import java.util.Objects;
 public class Student {
 
     @Id
-    private long id;
+    private int uid;
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "uid=" + uid +
+                ", id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", classes=" + classes +
+                ", comments=" + comments +
+                ", assignments=" + assignments +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return uid == student.uid && Objects.equals(id, student.id) && Objects.equals(name, student.name) && Objects.equals(email, student.email) && Objects.equals(classes, student.classes) && Objects.equals(comments, student.comments) && Objects.equals(assignments, student.assignments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid, id, name, email, classes, comments, assignments);
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
+    public Student(int uid, String id, String name, String email, List<Classes> classes, List<Comment> comments, List<Assignment> assignments) {
+        this.uid = uid;
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.classes = classes;
+        this.comments = comments;
+        this.assignments = assignments;
+    }
+
+    private String id;
     private String name;
     private String email;
     @ManyToMany(mappedBy = "student")
@@ -32,31 +78,6 @@ public class Student {
     @JsonBackReference
     private List<Assignment> assignments;
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", classes=" + classes +
-                ", comments=" + comments +
-                ", assignments=" + assignments +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Student)) return false;
-        Student student = (Student) o;
-        return getId() == student.getId() && Objects.equals(getName(), student.getName()) && Objects.equals(getEmail(), student.getEmail()) && Objects.equals(getClasses(), student.getClasses()) && Objects.equals(getComments(), student.getComments()) && Objects.equals(getAssignments(), student.getAssignments());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getClasses(), getComments(), getAssignments());
-    }
-
     public List<Assignment> getAssignments() {
         return assignments;
     }
@@ -65,11 +86,11 @@ public class Student {
         this.assignments = assignments;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -112,7 +133,7 @@ public class Student {
         this.comments = comments;
     }
 
-    public Student(long id, String name, String email, List<Classes> classes, List<Comment> comments) {
+    public Student(String id, String name, String email, List<Classes> classes, List<Comment> comments) {
         this.id = id;
         this.name = name;
         this.email = email;

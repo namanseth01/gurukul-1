@@ -43,15 +43,15 @@ public class HomeController {
     @ResponseBody
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public ResponseEntity<?> signUp(@RequestBody HashMap<String, Object> map) {
-        if (map.get("role").equals("teacher")) {
+        if (map.get("role").equals("Teacher")) {
             Teacher teacher = new Teacher();
-            teacher.setId(Long.parseLong((String) map.get("id")));
+            teacher.setId((String) map.get("id"));
             teacher.setName((String) map.get("name"));
             teacher.setEmail((String) map.get("email"));
             teacherRepository.save(teacher);
         } else {
             Student student = new Student();
-            student.setId(Long.parseLong((String) map.get("id")));
+            student.setId((String) map.get("id"));
             student.setName((String) map.get("name"));
             student.setEmail((String) map.get("email"));
             studentRepository.save(student);
@@ -66,7 +66,7 @@ public class HomeController {
         classes.setTitle((String) map.get("title"));
         classes.setTopic((String) map.get("topic"));
         classes.setMotto((String) map.get("motto"));
-        Teacher teacher = teacherRepository.findById(Long.parseLong((String) map.get("id")));
+        Teacher teacher = teacherRepository.findTeacherById((String) map.get("id"));
         Random rnd = new Random();
         while (true) {
             int number = rnd.nextInt(999999);
@@ -90,7 +90,7 @@ public class HomeController {
     @RequestMapping(value = "/studentJoinClass", method = RequestMethod.POST)
     public ResponseEntity<?> studentJoinsClass(@RequestBody HashMap<String, Object> map) {
         Classes classes = classesRepository.findClassesBySecretCode(Long.parseLong((String) map.get("secretCode")));
-        Student student = studentRepository.findById(Long.parseLong((String) map.get("id")));
+        Student student = studentRepository.findStudentById((String) map.get("id"));
         List<Student> student1 = classes.getStudent();
         List<Classes> classes1 = student.getClasses();
         classes1.add(classes);
@@ -116,7 +116,7 @@ public class HomeController {
     public ResponseEntity<?> fetchAnnouncementDetails(@RequestBody HashMap<String, Object> map) {
         Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
                 map.get("announcementId")));
-        Teacher teacher = teacherRepository.findById(Long.parseLong((String) map.get("uId")));
+        Teacher teacher = teacherRepository.findTeacherById((String) map.get("uId"));
 
         if(announcement.getDueDate()==null){
             return ResponseEntity.ok(Map.of("announcement", announcement));
@@ -125,7 +125,7 @@ public class HomeController {
             List<Assignment> assignments = announcement.getAssignments();
             return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignments));
         } else {
-            Student student = studentRepository.findById(Long.parseLong((String) map.get("uId")));
+            Student student = studentRepository.findStudentById((String) map.get("uId"));
             Assignment assignment = assignmentRepository.findAssignmentByAnnouncementAndStudent
                     (announcement, student);
             if(assignment==null){
@@ -138,7 +138,7 @@ public class HomeController {
     @ResponseBody
     @RequestMapping(value = "/submitAnnouncements", method = RequestMethod.POST)
     public ResponseEntity<?> submitAnnouncement(@RequestBody HashMap<String, Object> map, @RequestParam("file") MultipartFile file) {
-        Student student = studentRepository.findById(Long.parseLong((String) map.get("uId")));
+        Student student = studentRepository.findStudentById((String) map.get("uId"));
         Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
                 map.get("announcementId")));
         Assignment assignment = new Assignment();

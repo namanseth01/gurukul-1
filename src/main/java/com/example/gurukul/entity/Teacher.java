@@ -20,7 +20,8 @@ import java.util.Objects;
 public class Teacher {
 
     @Id
-    private long id;
+    private int uid;
+    private String id;
     private String name;
     private String email;
     @OneToMany(mappedBy = "teacher")
@@ -30,16 +31,11 @@ public class Teacher {
     @JsonBackReference
     private List<Comment> comments;
 
-    public Teacher(long id, String name, String email) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-    }
-
     @Override
     public String toString() {
         return "Teacher{" +
-                "id=" + id +
+                "uid=" + uid +
+                ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", classes=" + classes +
@@ -50,21 +46,44 @@ public class Teacher {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Teacher)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Teacher teacher = (Teacher) o;
-        return getId() == teacher.getId() && Objects.equals(getName(), teacher.getName()) && Objects.equals(getEmail(), teacher.getEmail()) && Objects.equals(getClasses(), teacher.getClasses()) && Objects.equals(getComments(), teacher.getComments());
+        return uid == teacher.uid && Objects.equals(id, teacher.id) && Objects.equals(name, teacher.name) && Objects.equals(email, teacher.email) && Objects.equals(classes, teacher.classes) && Objects.equals(comments, teacher.comments);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getClasses(), getComments());
+        return Objects.hash(uid, id, name, email, classes, comments);
     }
 
-    public long getId() {
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
+    public Teacher(int uid, String id, String name, String email, List<Classes> classes, List<Comment> comments) {
+        this.uid = uid;
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.classes = classes;
+        this.comments = comments;
+    }
+
+    public Teacher(String id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

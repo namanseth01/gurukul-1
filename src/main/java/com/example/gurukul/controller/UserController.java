@@ -69,13 +69,13 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/classes", method = RequestMethod.POST)
     public ResponseEntity<?> displayClasses(@RequestBody HashMap<String, Object> map){
-        Long id = Long.parseLong((String) map.get("id"));
-        List<Classes> listOfClasses;
-        if(this.studentRepository.getById(id)!=null){
-            Student student = this.studentRepository.getById(id);
+        String id = (String) map.get("id");
+        List<Classes> listOfClasses = new ArrayList<>();
+        if(this.studentRepository.findStudentById(id)!=null){
+            Student student = this.studentRepository.findStudentById(id);
             listOfClasses = student.getClasses();
         }else{
-            Teacher teacher = this.teacherRepository.getById(id);
+            Teacher teacher = this.teacherRepository.findTeacherById(id);
             listOfClasses = teacher.getClasses();
         }
         return ResponseEntity.ok(Map.of("listOfClasses", listOfClasses));
@@ -84,7 +84,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/comments", method = RequestMethod.POST)
     public ResponseEntity<?> createComments(@RequestBody HashMap<String, Object> map){
-        Long aId = Long.parseLong((String) map.get("uId"));
+        String aId = (String) map.get("uId");
         Announcement announcement = this.announcementRepository.getById(Integer.parseInt((String) map.get("announcementId")));
         List<Comment> commentsUnderAnnouncement = announcement.getComment();
         Comment comment = new Comment();
@@ -92,14 +92,14 @@ public class UserController {
         comment.setMessage((String) map.get("message"));
         Teacher teacher = null;
         Student student = null;
-        if(studentRepository.findById(aId)!=null){
-            student = studentRepository.getById(aId);
+        if(studentRepository.findStudentById(aId)!=null){
+            student = studentRepository.findStudentById(aId);
             comment.setStudent(student);
             List<Comment> comments = student.getComments();
             comments.add(comment);
         } else{
-            comment.setTeacher(teacherRepository.getById(aId));
-            teacher = teacherRepository.getById(aId);
+            comment.setTeacher(teacherRepository.findTeacherById(aId));
+            teacher = teacherRepository.findTeacherById(aId);
             comment.setTeacher(teacher);
             List<Comment> comments = teacher.getComments();
             comments.add(comment);
