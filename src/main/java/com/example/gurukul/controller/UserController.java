@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
+@CrossOrigin
 @Controller
 @RestController
 public class UserController {
