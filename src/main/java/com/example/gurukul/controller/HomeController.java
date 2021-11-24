@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @CrossOrigin
 @Controller
@@ -57,6 +54,17 @@ public class HomeController {
             studentRepository.save(student);
         }
         return ResponseEntity.ok(Map.of("Status", "success"));
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/role", method = RequestMethod.POST)
+    public ResponseEntity<?> role(@RequestBody HashMap<String, Object> map){
+        Teacher teacherById = teacherRepository.findTeacherById((String) map.get("id"));
+        if(teacherById!=null){
+            return ResponseEntity.ok(Map.of("Role", "Teacher"));
+        } else{
+            return ResponseEntity.ok(Map.of("Role", "Student"));
+        }
     }
 
     @ResponseBody
@@ -107,7 +115,8 @@ public class HomeController {
     public ResponseEntity<?> fetchAnnouncements(@RequestBody HashMap<String, Object> map) {
         Classes classesBySecretCode = classesRepository.findClassesBySecretCode(Long.parseLong((String)
                 map.get("secretCode")));
-        List<Announcement> announcement = classesBySecretCode.getAnnouncement();
+        List<Announcement> announcement = new ArrayList<>();
+        announcement = classesBySecretCode.getAnnouncement();
         return ResponseEntity.ok(Map.of("announcement", announcement));
     }
 
