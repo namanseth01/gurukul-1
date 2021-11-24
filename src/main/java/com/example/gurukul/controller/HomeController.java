@@ -8,6 +8,8 @@
 package com.example.gurukul.controller;
 
 
+import com.example.gurukul.email.Email;
+import com.example.gurukul.email.EmailService;
 import com.example.gurukul.entity.*;
 import com.example.gurukul.repository.*;
 import org.apache.commons.io.FilenameUtils;
@@ -40,20 +42,31 @@ public class HomeController {
     @ResponseBody
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public ResponseEntity<?> signUp(@RequestBody HashMap<String, Object> map) {
+        String otp;
+        Random rnd = new Random();
+        EmailService emailService = new EmailService();
         if (map.get("role").equals("Teacher")) {
             Teacher teacher = new Teacher();
             teacher.setId((String) map.get("id"));
             teacher.setName((String) map.get("name"));
             teacher.setEmail((String) map.get("email"));
             teacherRepository.save(teacher);
+            int number = rnd.nextInt(999999);
+            otp = String.format("%06d", number);
+            Email email = new Email();
+            emailService.sendEmail((String) map.get("email"), email.getHead2(), email.getMsg1(otp));
         } else {
             Student student = new Student();
             student.setId((String) map.get("id"));
             student.setName((String) map.get("name"));
             student.setEmail((String) map.get("email"));
             studentRepository.save(student);
+            int number = rnd.nextInt(999999);
+            otp = String.format("%06d", number);
+            Email email = new Email();
+            emailService.sendEmail((String) map.get("email"), email.getHead2(), email.getMsg1(otp));
         }
-        return ResponseEntity.ok(Map.of("Status", "success"));
+        return ResponseEntity.ok(Map.of("Status", "success","otp",otp));
     }
 
     @ResponseBody
