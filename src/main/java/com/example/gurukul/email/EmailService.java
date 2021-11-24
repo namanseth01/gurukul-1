@@ -31,14 +31,14 @@ public class EmailService {
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                PasswordAuthentication passwordAuthentication = new PasswordAuthentication("gurukulteam.tech@gmial.com", "Gurukul@29");
+                PasswordAuthentication passwordAuthentication = new PasswordAuthentication("gurukulteam.tech@gmail.com", "Gurukul@25");
                 return passwordAuthentication;
             }
         });
         session.setDebug(true);
         MimeMessage mimeMessage = new MimeMessage(session);
         try {
-            mimeMessage.setFrom("gurukulteam.tech@gmial.com");
+            mimeMessage.setFrom("gurukulteam.tech@gmail.com");
             mimeMessage.addRecipients(Message.RecipientType.TO, String.valueOf(new InternetAddress(to)));
             mimeMessage.setSubject(subject);
             mimeMessage.setText(message);

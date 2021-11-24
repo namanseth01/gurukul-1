@@ -19,6 +19,7 @@ import java.util.Objects;
 public class Student {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int uid;
 
     @Override
