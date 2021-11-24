@@ -110,7 +110,7 @@ public class HomeController {
     @ResponseBody
     @RequestMapping(value = "/studentJoinClass", method = RequestMethod.POST)
     public ResponseEntity<?> studentJoinsClass(@RequestBody HashMap<String, Object> map) {
-        Classes classes = classesRepository.findClassesBySecretCode(Long.parseLong((String) map.get("secretCode")));
+        Classes classes = classesRepository.findClassesBySecretCode(Long.parseLong(Integer.toString((Integer) map.get("secretCode"))));
         Student student = studentRepository.findStudentById((String) map.get("id"));
         List<Student> student1 = classes.getStudent();
         List<Classes> classes1 = student.getClasses();
