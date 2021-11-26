@@ -110,10 +110,20 @@ public class HomeController {
     @ResponseBody
     @RequestMapping(value = "/studentJoinClass", method = RequestMethod.POST)
     public ResponseEntity<?> studentJoinsClass(@RequestBody HashMap<String, Object> map) {
+        boolean flag = false;
         Classes classes = classesRepository.findClassesBySecretCode(Long.parseLong(Integer.toString((Integer) map.get("secretCode"))));
         Student student = studentRepository.findStudentById((String) map.get("id"));
         List<Student> student1 = classes.getStudent();
         List<Classes> classes1 = student.getClasses();
+        for (Classes classes2 : classes1) {
+            if(classes2.equals(classes)){
+                flag = true;
+                break;
+            }
+        }
+        if(flag){
+            return ResponseEntity.ok(Map.of("Status", "Already in the class"));
+        }
         classes1.add(classes);
         student1.add(student);
         classes.setStudent(student1);
