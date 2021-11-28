@@ -78,6 +78,9 @@ public class UserController {
             Teacher teacher = this.teacherRepository.findTeacherById(id);
             listOfClasses = teacher.getClasses();
         }
+        for (Classes aClass : listOfClasses) {
+            aClass.setAnnouncement(null);
+        }
         return ResponseEntity.ok(Map.of("listOfClasses", listOfClasses));
     }
 
