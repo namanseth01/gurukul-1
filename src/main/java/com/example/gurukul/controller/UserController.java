@@ -49,14 +49,14 @@ public class UserController {
         announcement.setMessage((String)map.get("msg"));
         Date date= new Date();
         announcement.setDate(date);
-        int classId = (int) Long.parseLong((String)map.get("secretCode"));
+        int classId = (int) map.get("secretCode");
         Classes classes = this.classesRepository.findClassesBySecretCode(classId);
         announcement.setClasses(classes);
         List<Announcement> list = classes.getAnnouncement();
         list.add(announcement);
         classes.setAnnouncement(list);
-        if(map.get("dueDate")!=null){
-            Date dueDate = new SimpleDateFormat("dd/MM/yyyy").parse((String) map.get("dueDate"));
+        if(map.get("dueDate")!=""){
+            Date dueDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) map.get("dueDate"));
             announcement.setDueDate(dueDate);
             List<Assignment> assignments = new ArrayList<>();
             announcement.setAssignments(assignments);
