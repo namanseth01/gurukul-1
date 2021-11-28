@@ -140,6 +140,9 @@ public class HomeController {
                 map.get("secretCode")));
         List<Announcement> announcement = new ArrayList<>();
         announcement = classesBySecretCode.getAnnouncement();
+        for (Announcement announcement1 : announcement) {
+            announcement1.setComment(null);
+        }
         return ResponseEntity.ok(Map.of("announcement", announcement));
     }
 
