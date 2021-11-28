@@ -151,8 +151,23 @@ public class HomeController {
     public ResponseEntity<?> fetchAnnouncementDetails(@RequestBody HashMap<String, Object> map) {
         Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
                 map.get("announcementId")));
-        Teacher teacher = teacherRepository.findTeacherById((String) map.get("uId"));
+        List<Comment> comment = announcement.getComment();
+        for (Comment comment1 : comment) {
+            if(comment1.getTeacher()==null){
+                Student student = new Student();
+                student.setName(comment1.getStudent().getName());
+                student.setEmail(comment1.getStudent().getEmail());
+                comment1.setStudent(student);
+            } else{
+                Teacher teacher = new Teacher();
+                teacher.setName(comment1.getTeacher().getName());
+                teacher.setEmail(comment1.getTeacher().getEmail());
+                comment1.setTeacher(teacher);
+            }
 
+        }
+        announcement.setComment(comment);
+        Teacher teacher = teacherRepository.findTeacherById((String) map.get("uId"));
         if(announcement.getDueDate()==null){
             return ResponseEntity.ok(Map.of("announcement", announcement));
         }
