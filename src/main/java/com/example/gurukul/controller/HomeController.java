@@ -173,11 +173,23 @@ public class HomeController {
         }
         if (teacher != null) {
             List<Assignment> assignments = announcement.getAssignments();
+            for (Assignment assignment : assignments) {
+                assignment.setAnnouncement(null);
+                Student student1 = new Student();
+                student1.setName(assignment.getStudent().getName());
+                student1.setEmail(assignment.getStudent().getEmail());
+                assignment.setStudent(student1);
+            }
             return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignments));
         } else {
             Student student = studentRepository.findStudentById((String) map.get("uId"));
             Assignment assignment = assignmentRepository.findAssignmentByAnnouncementAndStudent
                     (announcement, student);
+            assignment.setAnnouncement(null);
+            Student student1 = new Student();
+            student1.setName(assignment.getStudent().getName());
+            student1.setEmail(assignment.getStudent().getEmail());
+            assignment.setStudent(student1);
             if(assignment==null){
                 assignment = new Assignment();
             }
