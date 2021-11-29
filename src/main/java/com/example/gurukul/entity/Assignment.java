@@ -28,6 +28,7 @@ public class Assignment {
     private float marks;
     private String link;
 
+
     @Override
     public String toString() {
         return "Assignment{" +
@@ -46,7 +47,6 @@ public class Assignment {
         Assignment that = (Assignment) o;
         return getId() == that.getId() && Float.compare(that.getMarks(), getMarks()) == 0 && Objects.equals(getAnnouncement(), that.getAnnouncement()) && Objects.equals(getStudent(), that.getStudent()) && Objects.equals(getLink(), that.getLink());
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getAnnouncement(), getStudent(), getMarks(), getLink());
