@@ -210,7 +210,7 @@ public class HomeController {
         List<Assignment> announcementAssignments = announcement.getAssignments();
         assignment.setStudent(student);
         assignment.setAnnouncement(announcement);
-        assignment.setLink((String) map.get("link"));
+        assignment.setLink((String) map.get("downloadUrl"));
         studentAssignments.add(assignment);
         announcementAssignments.add(assignment);
         student.setAssignments(studentAssignments);
