@@ -183,16 +183,18 @@ public class HomeController {
             return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignments));
         } else {
             Student student = studentRepository.findStudentById((String) map.get("uId"));
-            Assignment assignment = assignmentRepository.findAssignmentByAnnouncementAndStudent
+            Assignment assignment  = new Assignment();
+            assignment = assignmentRepository.findAssignmentByAnnouncementAndStudent
                     (announcement, student);
+            if(assignment==null){
+                assignment = new Assignment();
+                return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignment));
+            }
             assignment.setAnnouncement(null);
             Student student1 = new Student();
             student1.setName(assignment.getStudent().getName());
             student1.setEmail(assignment.getStudent().getEmail());
             assignment.setStudent(student1);
-            if(assignment==null){
-                assignment = new Assignment();
-            }
             return ResponseEntity.ok(Map.of("announcement", announcement, "assignment", assignment));
         }
     }
