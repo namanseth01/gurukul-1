@@ -199,7 +199,7 @@ public class HomeController {
 
     @ResponseBody
     @RequestMapping(value = "/submitAnnouncements", method = RequestMethod.POST)
-    public ResponseEntity<?> submitAnnouncement(@RequestBody HashMap<String, Object> map, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> submitAnnouncement(@RequestBody HashMap<String, Object> map) {
         Student student = studentRepository.findStudentById((String) map.get("uId"));
         Announcement announcement = announcementRepository.findAnnouncementById(Integer.parseInt((String)
                 map.get("announcementId")));
@@ -208,15 +208,7 @@ public class HomeController {
         List<Assignment> announcementAssignments = announcement.getAssignments();
         assignment.setStudent(student);
         assignment.setAnnouncement(announcement);
-//        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-//        assignment.setExtension(extension);
-//        byte[] bytes;
-//        try {
-//            bytes = file.getBytes();
-//            assignment.setAssignmentFile(bytes);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        assignment.setLink((String) map.get("link"));
         studentAssignments.add(assignment);
         announcementAssignments.add(assignment);
         student.setAssignments(studentAssignments);
